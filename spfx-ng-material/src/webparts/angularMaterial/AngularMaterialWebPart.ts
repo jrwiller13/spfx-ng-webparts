@@ -1,5 +1,6 @@
 import './elements';
 import { AngularMaterial } from './elements/angular-material';
+import { AngularMaterialModuleNgFactory } from './elements/angular-material.module.ngfactory';
 
 import { Version } from '@microsoft/sp-core-library';
 import {
@@ -10,6 +11,7 @@ import {
 import { PropertyFieldListPicker, PropertyFieldListPickerOrderBy } from '@pnp/spfx-property-controls/lib/PropertyFieldListPicker';
 import pnp from "sp-pnp-js";
 import { PropertyPaneSlider } from '@microsoft/sp-webpart-base/lib/propertyPane/propertyPaneFields/propertyPaneSlider/PropertyPaneSlider';
+import { platformBrowser } from '@angular/platform-browser';
 
 /**
  * Example WebPart that uses Angular Material to dynamically display SharePoint List content
@@ -24,14 +26,16 @@ export default class AngularMaterialWebPartWebPart extends BaseClientSideWebPart
    * Renders the WebPart
    */
   public render(): void {
-    let currentComponent = this.getComponent();
+    platformBrowser().bootstrapModuleFactory(AngularMaterialModuleNgFactory /*, { ngZone: 'noop' }*/).then(() => {
+      let currentComponent = this.getComponent();
 
-    // If the component is already on the page, it means we need to refresh the DOM. Else, we simply render
-    if(currentComponent) {
-      this.refreshComponent(currentComponent);
-    } else {
-      this.renderComponent();
-    }
+      // If the component is already on the page, it means we need to refresh the DOM. Else, we simply render
+      if(currentComponent) {
+        this.refreshComponent(currentComponent);
+      } else {
+        this.renderComponent();
+      }
+    });
   }
 
   /**

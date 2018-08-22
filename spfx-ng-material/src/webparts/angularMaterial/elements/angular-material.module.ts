@@ -1,10 +1,11 @@
 import { AngularMaterial } from './angular-material';
-import { NgModule } from '@angular/core';
-import { MatToolbarModule } from '@angular/material';
+import { NgModule, Injector } from '@angular/core';
+import { MatInputModule, MatFormFieldModule, MatToolbarModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
+import { NgElementConfig, createCustomElement } from '@angular/elements';
 
 /**
  * Module that intializes our Angular Element
@@ -14,11 +15,22 @@ import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    MatToolbarModule
+    MatFormFieldModule, MatInputModule, MatToolbarModule
   ],
   declarations: [AngularMaterial],
   entryComponents: [AngularMaterial]
 })
 export class AngularMaterialModule {
-  ngDoBootstrap(){}
+  constructor(private injector: Injector) {
+
+  }
+
+  ngDoBootstrap(){
+    const config: NgElementConfig = { injector: this.injector };
+    const ngElement =  createCustomElement(AngularMaterial, config);
+
+    if(!customElements.get("angular-material")) {
+      customElements.define("angular-material", ngElement);
+    }
+  }
 }
